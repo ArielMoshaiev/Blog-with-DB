@@ -60,30 +60,25 @@ app.post("/compose", function(req, res){
   post.save().then(()=> 
   {
     console.log("Post added to DB succesfully");
-    
   })
   .catch(err =>{
     res.status(400).send("Unable to save post to database.");
   });
+
   res.redirect("/");
 
 });
 
-app.get("/posts/:postName", function(req, res){
-  const requestedTitle = _.lowerCase(req.params.postName);
+app.get("/posts/:postId", function(req, res){
+  const reqPostId =  req.params.postId;
 
-  posts.forEach(function(post){
-    const storedTitle = _.lowerCase(post.title);
-
-    if (storedTitle === requestedTitle) {
-      res.render("post", {
-        title: post.title,
-        content: post.content
-      });
-    }
-  });
-
+  Post.findOne({_id : reqPostId})
+  .then((foundpost) =>{
+  res.render("post", {title : foundpost.title, content : foundpost.content});
+})
 });
+
+
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
